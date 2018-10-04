@@ -4,25 +4,9 @@ import threading
 
 from fullmetalmadda import FMM_IRCConnectionManager
 
+from .PyDojo import on_private_msg, on_channel_msg
+
 CONN = FMM_IRCConnectionManager("voting_bot.cfg")
-
-
-def on_private_message(*args, **kwargs):
-    CONN.send(
-        'PRIVMSG',
-        '#ldnpydojo',
-        None,
-        'Got private message',
-    )
-
-
-def on_channel_message(*args, **kwargs):
-    CONN.send(
-        'PRIVMSG',
-        '#ldnpydojo',
-        None,
-        'Got channel message',
-    )
 
 
 def irc_loop():
@@ -42,12 +26,16 @@ def irc_loop():
 
         if message.data['type'] == 'PRIVMSG':
             if message.data['channel'] == '#:PRIVATE:#':
-                on_private_message(message.data['target'],
-                                   message.data['message'])
+                on_private_msg(
+                    message.data['target'],
+                    message.data['message'],
+                )
             else:
-                on_channel_message(message.data['target'],
-                                   message.data['channel'],
-                                   message.data['message'])
+                on_channel_msg(
+                    message.data['target'],
+                    message.data['channel'],
+                    message.data['message'],
+                )
 
 
 if __name__ == "__main__":

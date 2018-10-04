@@ -27,8 +27,8 @@ def on_channel_msg(user, channel, msg):
             num = int(msg)
         except ValueError:
             return
-        vote2_counts[user] = num        
-    
+        vote2_counts[user] = num
+
 def on_private_msg(user, msg):
     global current_state
     msg = msg.strip()
@@ -64,6 +64,8 @@ def load_ideas():
     with open(FILE) as f:
         ideas[:] = f.read().splitlines()
 
+
 def send_msg(target, msg):
-    pass
+    from voting_bot import CONN
+    CONN.send('PRIVMSG', "#ldnpydojo", None, msg)
 
