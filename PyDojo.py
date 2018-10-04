@@ -46,15 +46,33 @@ def on_private_msg(user, msg):
         current_state = state.DISPLAY
     if command == "vote":
         if current_state is state.DISPLAY:
-            current_state = state.VOTE1
+            start_vote1()
         if current_state is state.VOTE1:
-            current_state = state.VOTE2
+            start_vote2()
         send_msg(user, f"Ok, beginning {current_state.value}")
     if command == 'idea':
         save_idea(arg)
         send_msg(user, 'Thanks for the idea!')
     else:
         send_msg(user, "I don't understand")
+
+def start_vote1():
+    global current_state
+    current_state = state.VOTE1
+    
+
+def start_vote2():
+    global current_state
+    current_state = state.VOTE2
+    winners = []
+    for num, idea in enumerate(ideas):
+        votes = len(vote1_counts[num])
+        winners.append((votes, idea))
+    winners.sort(reverse=True)
+    del winners[3:]
+    ideas[:] = [idea for votes, idea in winners]
+    for num, (votes, idea) in enumerate(winners):
+        send_msg(channel, f"{num}. {idea}")
 
 def save_idea(idea):
     with open(FILE, "a") as f:
