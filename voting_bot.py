@@ -7,6 +7,24 @@ from fullmetalmadda import FMM_IRCConnectionManager
 CONN = FMM_IRCConnectionManager("voting_bot.cfg")
 
 
+def on_private_message(*args, **kwargs):
+    CONN.send(
+        'PRIVMSG',
+        '#ldnpydojo',
+        None,
+        'Got private message',
+    )
+
+
+def on_channel_message(*args, **kwargs):
+    CONN.send(
+        'PRIVMSG',
+        '#ldnpydojo',
+        None,
+        'Got channel message',
+    )
+
+
 def irc_loop():
     # Create the new IRC connection using the supplied config file name
     conn = CONN
@@ -15,6 +33,7 @@ def irc_loop():
         message = conn.get_message()
         if message is None:
             continue
+        print(message.data['message'])
 
         if(conn.quit_sent):
             time.sleep(3)
@@ -26,17 +45,9 @@ def irc_loop():
                 on_private_message(message.data['target'],
                                    message.data['message'])
             else:
-                on_channel_message(message.data['user'],
+                on_channel_message(message.data['target'],
                                    message.data['channel'],
-                                   message.data['messager'])
-
-        time.sleep(1)
-
-    conn.send(
-        messagetype='PRIVMSG',
-        target='#ldnpydojo',
-        message='The message',
-    )
+                                   message.data['message'])
 
 
 if __name__ == "__main__":

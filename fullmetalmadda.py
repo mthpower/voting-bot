@@ -136,7 +136,6 @@ class irc_connection:
     self.connection.close()
     self.messages = Queue()
 
-  @print_timing    
   def sendraw(self,message):
     #Send a raw message- must be sent as bytes
     try:
