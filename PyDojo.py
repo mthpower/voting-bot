@@ -1,5 +1,6 @@
 from enum import Enum
-from collections import defaultdict
+from collections import defaultdict, Counter
+
 
 FILE = "ideas.txt"
 
@@ -27,8 +28,8 @@ def on_channel_msg(user, channel, msg):
             num = int(msg)
         except ValueError:
             return
-        vote2_counts[user] = num
-
+        vote2_counts[user] = num        
+    
 def on_private_msg(user, msg):
     global current_state
     msg = msg.strip()
@@ -50,6 +51,9 @@ def on_private_msg(user, msg):
         if current_state is state.VOTE1:
             start_vote2()
         send_msg(user, f"Ok, beginning {current_state.value}")
+    if command == "end":
+        if current_state is state.VOTE2:
+            end_vote2()
     if command == 'idea':
         save_idea(arg)
         send_msg(user, 'Thanks for the idea!')
@@ -74,6 +78,13 @@ def start_vote2():
     for num, (votes, idea) in enumerate(winners):
         send_msg(channel, f"{num}. {idea}")
 
+def end_vote2():
+    global current_state
+    current_state = state.IDEAS
+    scores = Counter(vote2_counts.values())
+    winner, = scores.most_common(1)
+    send_msg(channel, f"The winner is {winner}. {ideas[winner]}")
+
 def save_idea(idea):
     with open(FILE, "a") as f:
         print(idea, file=f)
@@ -82,8 +93,6 @@ def load_ideas():
     with open(FILE) as f:
         ideas[:] = f.read().splitlines()
 
-
 def send_msg(target, msg):
-    from voting_bot import CONN
-    CONN.send('PRIVMSG', "#ldnpydojo", None, msg)
+    pass
 
