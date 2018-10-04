@@ -4,7 +4,7 @@ import threading
 
 from fullmetalmadda import FMM_IRCConnectionManager
 
-from .PyDojo import on_private_msg, on_channel_msg
+from PyDojo import on_private_msg, on_channel_msg
 
 CONN = FMM_IRCConnectionManager("voting_bot.cfg")
 
